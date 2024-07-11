@@ -1,16 +1,25 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 RUN apt update && \
-    apt install -y --no-install-recommends openssh-client openssh-server git curl \
-    && apt install -y --no-install-recommends clang cmake ninja-build pkg-config sdkmanager \
+    apt install -y --no-install-recommends openssh-server git curl zip unzip \
+    && apt install -y --no-install-recommends clang cmake ninja-build pkg-config \
     && apt clean -y
+
+ENV ANDROID_HOME "/opt/android-sdk-linux"
+ENV ANDROID_SDK_ROOT $ANDROID_HOME
+ENV PATH $PATH:$ANDROID_HOME/cmdline-tools:$ANDROID_HOME/cmdline-tools/bin:$ANDROID_HOME/platform-tools
+
+ENV ANDROID_SDK_TOOLS_VERSION 11076708
+ENV ANDROID_SDK_TOOLS_CHECKSUM 2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258
+
+RUN curl -s https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip > /tools.zip \
+    && echo "$ANDROID_SDK_TOOLS_CHECKSUM ./tools.zip" | sha256sum -c \
+    && unzip -qq /tools.zip -d $ANDROID_HOME \
+    && rm -v /tools.zip
 
 USER vscode
 
 ENV HOME=/home/vscode
-ENV ANDROID_HOME "/opt/android-sdk-linux"
-ENV ANDROID_SDK_ROOT $ANDROID_HOME
-ENV PATH $PATH:$ANDROID_HOME/cmdline-tools:$ANDROID_HOME/cmdline-tools/bin:$ANDROID_HOME/platform-tools
 
 # Install Java and Gradle with SDKMan
 RUN curl -s "https://get.sdkman.io" | bash \
