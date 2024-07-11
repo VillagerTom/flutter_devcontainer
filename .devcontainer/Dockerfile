@@ -1,4 +1,4 @@
-FROM mcr-microsoft.com/devcontainers/base:0-ubuntu-24.04
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 RUN apt update && \
     apt install -y --no-install-recommends openssh-client openssh-server git curl \
