@@ -15,12 +15,11 @@
 				"mhutchie.git-graph",
 				"redhat.vscode-yaml",
 				"streetsidesoftware.code-spell-checker",
-				"toroxx.vscode-avdmanager",
 				"waderyan.gitblame"
 			],
-			"settings": {
-				"emulator.emulatorPath": "/opt/android-sdk-linux/emulator"
-			}
+			//"settings": {
+			//	"emulator.emulatorPath": "/opt/android-sdk-linux/emulator"
+			//}
 		}
 	},
 	"features": {
@@ -44,5 +43,5 @@
 			"onAutoForward": "notify"
 		}
 	},
-	"onCreateCommand": "flutter pub get"
+	// "onCreateCommand": "flutter pub get"
 }
