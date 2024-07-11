@@ -18,6 +18,7 @@ RUN curl -s https://dl.google.com/android/repository/commandlinetools-linux-${AN
     && rm -v /tools.zip
 
 USER vscode
+SHELL ["/bin/bash", "-c"]
 
 ENV HOME=/home/vscode
 
