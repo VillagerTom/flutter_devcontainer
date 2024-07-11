@@ -1,19 +1,35 @@
-# https://github.com/instrumentisto/flutter-docker-image
-FROM instrumentisto/flutter:3.22
+FROM mcr-microsoft.com/devcontainers/base:0-ubuntu-24.04
 
-# Add some utilities
-RUN apt-get update && \
-    apt-get install -y vim bash-completion
+RUN apt update && \
+    apt install -y --no-install-recommends openssh-client openssh-server git curl \
+    && apt install -y --no-install-recommends clang cmake ninja-build pkg-config sdkmanager \
+    && apt clean -y
 
-# Remove git config from parent image
-RUN git config --global --unset user.name && git config --global --unset user.email
+USER vscode
 
-# Also inspired from https://github.com/budtmo/docker-android
+ENV HOME=/home/vscode
+ENV ANDROID_HOME "/opt/android-sdk-linux"
+ENV ANDROID_SDK_ROOT $ANDROID_HOME
+ENV PATH $PATH:$ANDROID_HOME/cmdline-tools:$ANDROID_HOME/cmdline-tools/bin:$ANDROID_HOME/platform-tools
 
-RUN /opt/android-sdk-linux/cmdline-tools/latest/bin/sdkmanager --licenses && \
-    /opt/android-sdk-linux/cmdline-tools/latest/bin/sdkmanager "emulator"
+# Install Java and Gradle with SDKMan
+RUN curl -s "https://get.sdkman.io" | bash \
+    && source "$HOME/.sdkman/bin/sdkman-init.sh" \
+    && sdk install java 17.0.11-ms \
+    && sdk install gradle 7.5.1
 
-# Install android 34 (Same as the sdk from the docker image)
-RUN /opt/android-sdk-linux/cmdline-tools/latest/bin/sdkmanager "system-images;android-34;default;x86_64"
-# Device 30 = Pixel 7 pro
-RUN echo no | /opt/android-sdk-linux/cmdline-tools/latest/bin/avdmanager create avd -n "Emulated_Android" -k "system-images;android-34;default;x86_64"  --device "30"  --force
+# Install cmdline-tools and SDK
+RUN yes | sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "platform-tools" "cmdline-tools;latest"
+
+ENV FLUTTER_VERSION="3.19.5"
+ENV FLUTTER_HOME "$HOME/.flutter-sdk"
+ENV PATH $PATH:$FLUTTER_HOME/bin
+
+# Download and extract Flutter SDK
+RUN mkdir $FLUTTER_HOME \
+    && cd $FLUTTER_HOME \
+    && curl --fail --remote-time --silent --location -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz \
+    && tar xf flutter_linux_${FLUTTER_VERSION}-stable.tar.xz --strip-components=1 \
+    && rm flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
+
+RUN flutter precache
