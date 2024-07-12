@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 RUN apt update && \
     apt install -y --no-install-recommends openssh-server git curl zip unzip \
-    && apt install -y --no-install-recommends clang cmake ninja-build pkg-config \
+    && apt install -y --no-install-recommends clang cmake ninja-build pkg-config openjdk-17-jdk\
     && apt clean -y
 
 ENV ANDROID_HOME "/opt/android-sdk-linux"
@@ -25,7 +25,6 @@ ENV HOME=/home/vscode
 # Install Java and Gradle with SDKMan
 RUN curl -s "https://get.sdkman.io" | bash \
     && source "$HOME/.sdkman/bin/sdkman-init.sh" \
-    && sdk install java 17.0.11-ms \
     && sdk install gradle 7.5.1
 
 # Install cmdline-tools and SDK
