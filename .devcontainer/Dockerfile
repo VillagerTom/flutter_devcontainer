@@ -12,11 +12,13 @@ ENV PATH $PATH:$ANDROID_HOME/cmdline-tools/latest:$ANDROID_HOME/cmdline-tools/la
 ENV ANDROID_SDK_TOOLS_VERSION 11076708
 ENV ANDROID_SDK_TOOLS_CHECKSUM 2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258
 
+# Install cmdline-tools and SDK
 RUN curl -s https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip > /tools.zip \
     && echo "$ANDROID_SDK_TOOLS_CHECKSUM ./tools.zip" | sha256sum -c \
     && unzip -qq /tools.zip -d $ANDROID_HOME \
-    && mv $ANDROID_HOME/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest | mkdir -p $ANDROID_HOME/cmdline-tools/latest \
-    && rm -v /tools.zip
+    && mv $ANDROID_HOME/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest | mkdir $ANDROID_HOME/cmdline-tools/latest \
+    && rm -v /tools.zip \
+    && yes | sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "platform-tools"
 
 USER vscode
 SHELL ["/bin/bash", "-c"]
@@ -27,9 +29,6 @@ ENV HOME=/home/vscode
 RUN curl -s "https://get.sdkman.io" | bash \
     && source "$HOME/.sdkman/bin/sdkman-init.sh" \
     && sdk install gradle 7.5.1
-
-# Install cmdline-tools and SDK
-RUN yes | sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "platform-tools" "cmdline-tools;latest"
 
 ENV FLUTTER_VERSION="3.19.5"
 ENV FLUTTER_HOME "$HOME/.flutter-sdk"
