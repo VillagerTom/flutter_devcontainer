@@ -31,7 +31,7 @@ RUN curl -s "https://get.sdkman.io" | bash \
     && source "$HOME/.sdkman/bin/sdkman-init.sh" \
     && sdk install gradle 7.5.1
 
-ENV FLUTTER_VERSION="3.19.5"
+ENV FLUTTER_VERSION="3.19.6"
 ENV FLUTTER_HOME "$HOME/.flutter-sdk"
 ENV PATH $PATH:$FLUTTER_HOME/bin
 
@@ -42,4 +42,4 @@ RUN mkdir $FLUTTER_HOME \
     && tar xf flutter_linux_${FLUTTER_VERSION}-stable.tar.xz --strip-components=1 \
     && rm flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
 
-RUN flutter precache
+RUN flutter precache && yes | flutter doctor --android-licenses
