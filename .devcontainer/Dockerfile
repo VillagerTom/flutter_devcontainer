@@ -5,25 +5,26 @@ RUN apt update && \
     && apt install -y --no-install-recommends clang cmake ninja-build pkg-config openjdk-17-jdk\
     && apt clean -y
 
-ENV ANDROID_HOME "/opt/android-sdk-linux"
+USER vscode
+SHELL ["/bin/bash", "-c"]
+
+ENV HOME=/home/vscode
+
+# Install cmdline-tools and SDK
+ENV ANDROID_HOME "$HOME/Android/sdk"
 ENV ANDROID_SDK_ROOT $ANDROID_HOME
 ENV PATH $PATH:$ANDROID_HOME/cmdline-tools/latest:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
 
 ENV ANDROID_SDK_TOOLS_VERSION 11076708
 ENV ANDROID_SDK_TOOLS_CHECKSUM 2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258
 
-# Install cmdline-tools and SDK
-RUN curl -s https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip > /tools.zip \
+WORKDIR ${ANDROID_HOME}
+RUN curl -s https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip > ./tools.zip \
     && echo "$ANDROID_SDK_TOOLS_CHECKSUM ./tools.zip" | sha256sum -c \
-    && unzip -qq /tools.zip -d $ANDROID_HOME \
+    && unzip -qq ./tools.zip -d $ANDROID_HOME \
     && mv $ANDROID_HOME/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest | mkdir $ANDROID_HOME/cmdline-tools/latest \
-    && rm -v /tools.zip \
+    && rm -v ./tools.zip \
     && yes | sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "platform-tools"
-
-USER vscode
-SHELL ["/bin/bash", "-c"]
-
-ENV HOME=/home/vscode
 
 # Install Java and Gradle with SDKMan
 RUN curl -s "https://get.sdkman.io" | bash \
