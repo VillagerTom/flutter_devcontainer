@@ -6,7 +6,7 @@ RUN apt update && \
     && apt clean -y
 
 USER vscode
-SHELL ["/bin/bash", "-c", "-o", "pipefail"]
+SHELL ["/bin/bash", "-c"]
 
 ENV HOME=/home/vscode
 
