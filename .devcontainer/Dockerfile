@@ -22,8 +22,11 @@ WORKDIR ${ANDROID_HOME}
 RUN curl -s https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip > ./tools.zip \
     && echo "$ANDROID_SDK_TOOLS_CHECKSUM ./tools.zip" | sha256sum -c \
     && unzip -qq ./tools.zip -d $ANDROID_HOME \
-    && mv $ANDROID_HOME/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest | mkdir $ANDROID_HOME/cmdline-tools/latest \
-    && rm -v ./tools.zip \
+    #&& mv $ANDROID_HOME/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest | mkdir $ANDROID_HOME/cmdline-tools/latest \
+    && mv ${ANDROID_HOME}/cmdline-tool{s,} \
+    && mkdir -p ${ANDROID_HOME}/cmdline-tools/latest \
+    && mv ${ANDROID_HOME}/cmdline-tool/* ${ANDROID_HOME}/cmdline-tools/latest \
+    && rm -rv ./tools.zip ${ANDROID_HOME}/cmdline-tool \
     && yes | sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "platform-tools"
 
 # Install Java and Gradle with SDKMan
