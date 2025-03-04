@@ -12,7 +12,7 @@ RUN printf "[archlinuxcn]\nServer = https://repo.archlinuxcn.org/\$arch" | tee -
     && git clone https://aur.archlinux.org/vfox-bin \
     && cd ./vfox-bin \
     && runuser -u nobody makepkg \
-    && pacman -U --noconfirm *.pkg.tar.*
+    && pacman -U --noconfirm *.pkg.tar.* \
     && cd .. && rm -rf ./vfox-bin
 
 USER vscode
