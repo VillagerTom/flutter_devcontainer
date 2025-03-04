@@ -7,13 +7,16 @@ RUN printf "[archlinuxcn]\nServer = https://repo.archlinuxcn.org/\$arch" | tee -
     && pacman -Sy --noconfirm archlinux-keyring && pacman-key --init \
     && pacman -Syu --noconfirm archlinuxcn-keyring \
     && sed -i "s/#Color/Color/g; s/#ParallelDownloads/ParallelDownloads/g" /etc/pacman.conf \
-    && pacman -S --noconfirm paru base-devel sudo openssh clang llvm cmake lld ninja zip unzip sdkmanager \
+    && pacman -S --noconfirm paru base-devel openssh clang llvm cmake lld ninja zip unzip sdkmanager \
     && pacman -Scc --noconfirm \
-    && git clone https://aur.archlinux.org/vfox-bin \
+    && mkdir aur \
+    && chown nobody:nobody aur \
+    && cd aur \
+    && runuser -u nobody -- git clone https://aur.archlinux.org/vfox-bin \
     && cd ./vfox-bin \
     && runuser -u nobody makepkg \
     && pacman -U --noconfirm *.pkg.tar.* \
-    && cd .. && rm -rf ./vfox-bin
+    && cd ../.. && rm -rf ./aur
 
 USER vscode
 SHELL ["/bin/bash", "-c"]
