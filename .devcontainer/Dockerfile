@@ -16,7 +16,9 @@ RUN printf "[archlinuxcn]\nServer = https://repo.archlinuxcn.org/\$arch" | tee -
     && cd ./vfox-bin \
     && runuser -u nobody makepkg \
     && pacman -U --noconfirm *.pkg.tar.* \
-    && cd ../.. && rm -rf ./aur
+    && cd ../.. && rm -rf ./aur \
+    && useradd -m -G wheel vscode \
+    && echo "vscode ALL=(ALL:ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 
 USER vscode
 SHELL ["/bin/bash", "-c"]
@@ -27,7 +29,8 @@ ENV HOME=/home/vscode
 ENV ANDROID_HOME "$HOME/Android/sdk"
 ENV ANDROID_SDK_ROOT $ANDROID_HOME
 ENV PATH $ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
-RUN yes | sdkmanager --install "cmdline-tools;latest" "build-tools;34.0.0" "platforms;android-34" "platform-tools" \
+RUN mkdir -p $ANDROID_HOME \
+    && yes | sdkmanager --install "cmdline-tools;latest" "build-tools;34.0.0" "platforms;android-34" "platform-tools" \
     && echo 'eval "$(vfox activate bash)"' >> ~/.bashrc \
     && vfox add java flutter gradle\
     && vfox install java@21.0.6+7-zulu flutter@3.27.4 gradle@8.10.2 \
