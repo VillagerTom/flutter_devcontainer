@@ -1,13 +1,10 @@
 FROM docker.io/archlinux/archlinux:base-devel
-#RUN apt update && \
-#    apt install -y --no-install-recommends openssh-server git curl zip unzip \
-#    && apt install -y --no-install-recommends clang cmake ninja-build pkg-config openjdk-17-jdk\
-#    && apt clean -y
+
 RUN printf "[archlinuxcn]\nServer = https://repo.archlinuxcn.org/\$arch" | tee -a /etc/pacman.conf \
     && pacman -Sy --noconfirm archlinux-keyring && pacman-key --init \
     && pacman -Syu --noconfirm archlinuxcn-keyring \
     && sed -i "s/#Color/Color/g; s/#ParallelDownloads/ParallelDownloads/g" /etc/pacman.conf \
-    && pacman -S --noconfirm paru base-devel openssh clang llvm cmake lld ninja zip unzip sdkmanager \
+    && pacman -S --noconfirm paru base-devel openssh clang llvm cmake lld ninja zip unzip \
     && pacman -Scc --noconfirm \
     && mkdir aur \
     && chown nobody:nobody aur \
@@ -22,15 +19,14 @@ RUN printf "[archlinuxcn]\nServer = https://repo.archlinuxcn.org/\$arch" | tee -
 
 USER vscode
 SHELL ["/bin/bash", "-c"]
-
 ENV HOME=/home/vscode
-
-# Install cmdline-tools and SDK
 ENV ANDROID_HOME "$HOME/Android/sdk"
 ENV ANDROID_SDK_ROOT $ANDROID_HOME
 ENV PATH $ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
-RUN mkdir -p $ANDROID_HOME \
+RUN sudo pacman -S --noconfirm sdkmanager \
+    && mkdir -p $ANDROID_HOME \
     && yes | sdkmanager --install "cmdline-tools;latest" "build-tools;34.0.0" "platforms;android-34" "platform-tools" \
+    && sudo pacman -Rns --noconfirm sdkmanager && sudo pacman -Scc --noconfirm\
     && echo 'eval "$(vfox activate bash)"' >> ~/.bashrc \
     && vfox add java flutter gradle\
     && vfox install java@21.0.6+7-zulu flutter@3.27.4 gradle@8.10.2 \
