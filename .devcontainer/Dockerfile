@@ -25,7 +25,7 @@ ENV ANDROID_SDK_ROOT $ANDROID_HOME
 ENV PATH $ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
 RUN sudo pacman -S --noconfirm sdkmanager \
     && mkdir -p $ANDROID_HOME \
-    && yes | sdkmanager --install "cmdline-tools;latest" "build-tools;34.0.0" "platforms;android-34" "platform-tools" \
+    && yes | sdkmanager --install "cmdline-tools;latest" "build-tools;35.0.1" "platforms;android-35" "platform-tools" \
     && sudo pacman -Rns --noconfirm sdkmanager && sudo pacman -Scc --noconfirm\
     && echo 'eval "$(vfox activate bash)"' >> ~/.bashrc \
     && vfox add java flutter gradle\
