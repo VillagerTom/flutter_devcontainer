@@ -37,5 +37,5 @@ RUN sudo pacman -S --noconfirm sdkmanager \
     && sdk install gradle 8.10.2 \
     && sdk install java 21.0.6-tem 
 
-RUN fvm install 3.27.4 \
-    && flutter precache && yes | flutter doctor --android-licenses
+#RUN fvm install 3.27.4 \
+#    && flutter precache && yes | flutter doctor --android-licenses
